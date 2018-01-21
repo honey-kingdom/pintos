@@ -1,0 +1,11 @@
+Advanced check of system calls:
+5	deadlock-test
+5	deadlock-test2
+3	wakeup-single
+3	wakeup-multi
+3	prio-normal
+3	lock-normal
+3	lock-double
+3	lock-null
+3	unlock-double
+3	unlock-null
