@@ -588,6 +588,7 @@ afflictors	src/examples/insult.c	/^char *afflictors[] =$/;"	v
 afflictorsLoc	src/examples/insult.c	/^char afflictorsLoc[] = { 6, 0, 2, 4, 6, 8, 12, 16 };$/;"	v
 alarm_priority_thread	src/tests/threads/alarm-priority.c	/^alarm_priority_thread (void *aux UNUSED) $/;"	f	file:
 alarm_priority_thread	src/tests/threads/alarm-priority.c	/^static thread_func alarm_priority_thread;$/;"	v	file:
+alarm_tick	src/threads/thread.h	/^    int64_t alarm_tick;$/;"	m	struct:thread
 all_blocks	src/devices/block.c	/^static struct list all_blocks = LIST_INITIALIZER (all_blocks);$/;"	v	typeref:struct:list	file:
 all_list	src/threads/thread.c	/^static struct list all_list;$/;"	v	typeref:struct:list	file:
 allelem	src/threads/thread.h	/^    struct list_elem allelem;           \/* List element for all threads list. *\/$/;"	m	struct:thread	typeref:struct:thread::list_elem
@@ -1953,6 +1954,7 @@ test_name	src/tests/vm/child-linear.c	/^const char *test_name = "child-linear";$
 test_name	src/tests/vm/child-qsort-mm.c	/^const char *test_name = "child-qsort-mm";$/;"	v
 test_name	src/tests/vm/child-qsort.c	/^const char *test_name = "child-qsort";$/;"	v
 test_name	src/tests/vm/child-sort.c	/^const char *test_name = "child-sort";$/;"	v
+test_print_name	src/tests/threads/print-name.c	/^test_print_name (void)$/;"	f
 test_priority_change	src/tests/threads/priority-change.c	/^test_priority_change (void) $/;"	f
 test_priority_condvar	src/tests/threads/priority-condvar.c	/^test_priority_condvar (void) $/;"	f
 test_priority_donate_chain	src/tests/threads/priority-donate-chain.c	/^test_priority_donate_chain (void) $/;"	f
@@ -1972,6 +1974,7 @@ tests	src/tests/threads/tests.c	/^static const struct test tests[] = $/;"	v	type
 thread	src/threads/thread.h	/^struct thread$/;"	s
 thread_action_func	src/threads/thread.h	/^typedef void thread_action_func (struct thread *t, void *aux);$/;"	t
 thread_block	src/threads/thread.c	/^thread_block (void) $/;"	f
+thread_check_alarm	src/threads/thread.c	/^thread_check_alarm (int64_t current_tick)$/;"	f
 thread_create	src/threads/thread.c	/^thread_create (const char *name, int priority,$/;"	f
 thread_current	src/threads/thread.c	/^thread_current (void) $/;"	f
 thread_exit	src/threads/thread.c	/^thread_exit (void) $/;"	f
@@ -1987,6 +1990,7 @@ thread_mlfqs	src/threads/thread.c	/^bool thread_mlfqs;$/;"	v
 thread_name	src/threads/thread.c	/^thread_name (void) $/;"	f
 thread_print_stats	src/threads/thread.c	/^thread_print_stats (void) $/;"	f
 thread_schedule_tail	src/threads/thread.c	/^thread_schedule_tail (struct thread *prev)$/;"	f
+thread_set_alarm	src/threads/thread.c	/^thread_set_alarm (int64_t alarm_tick)$/;"	f
 thread_set_nice	src/threads/thread.c	/^thread_set_nice (int nice UNUSED) $/;"	f
 thread_set_priority	src/threads/thread.c	/^thread_set_priority (int new_priority) $/;"	f
 thread_stack_ofs	src/threads/thread.c	/^uint32_t thread_stack_ofs = offsetof (struct thread, stack);$/;"	v
@@ -1996,6 +2000,7 @@ thread_tick	src/threads/thread.c	/^thread_tick (void) $/;"	f
 thread_ticks	src/threads/thread.c	/^static unsigned thread_ticks;   \/* # of timer ticks since last yield. *\/$/;"	v	file:
 thread_tid	src/threads/thread.c	/^thread_tid (void) $/;"	f
 thread_unblock	src/threads/thread.c	/^thread_unblock (struct thread *t) $/;"	f
+thread_wake	src/threads/thread.c	/^thread_wake (struct thread *t, int64_t current_tick) $/;"	f
 thread_yield	src/threads/thread.c	/^thread_yield (void) $/;"	f
 threads_SRC	src/threads/build/Makefile	/^threads_SRC  = threads\/start.S		# Startup code.$/;"	m
 tick_count	src/tests/threads/mlfqs-fair.c	/^    int tick_count;$/;"	m	struct:thread_info	file:
@@ -2005,6 +2010,7 @@ tid_lock	src/threads/thread.c	/^static struct lock tid_lock;$/;"	v	typeref:struc
 tid_t	src/threads/thread.h	/^typedef int tid_t;$/;"	t
 time_t	src/devices/rtc.h	/^typedef unsigned long time_t;$/;"	t
 timeout	src/utils/pintos	/^sub timeout {$/;"	s
+timer_alarm	src/devices/timer.c	/^timer_alarm (void) $/;"	f
 timer_calibrate	src/devices/timer.c	/^timer_calibrate (void) $/;"	f
 timer_elapsed	src/devices/timer.c	/^timer_elapsed (int64_t then) $/;"	f
 timer_init	src/devices/timer.c	/^timer_init (void) $/;"	f
@@ -2108,6 +2114,7 @@ wait_until_idle	src/devices/ide.c	/^wait_until_idle (const struct ata_disk *d) $
 wait_while_busy	src/devices/ide.c	/^wait_while_busy (const struct ata_disk *d) $/;"	f	file:
 waiters	src/threads/synch.h	/^    struct list waiters;        \/* List of waiting threads. *\/$/;"	m	struct:condition	typeref:struct:condition::list
 waiters	src/threads/synch.h	/^    struct list waiters;        \/* List of waiting threads. *\/$/;"	m	struct:semaphore	typeref:struct:semaphore::list
+waiting_list	src/devices/timer.c	/^static struct list waiting_list;$/;"	v	typeref:struct:list	file:
 wake_time	src/tests/threads/alarm-priority.c	/^static int64_t wake_time;$/;"	v	file:
 wakeup	src/lib/user/syscall.c	/^wakeup (const char *name)$/;"	f
 width	src/lib/stdio.c	/^    int width;$/;"	m	struct:printf_conversion	file:
