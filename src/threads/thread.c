@@ -233,6 +233,18 @@ thread_block (void)
   schedule ();
 }
 
+void
+thread_set_alarm (int64_t alarm_tick)
+{
+    thread_current()->alarm_tick = alarm_tick;
+}
+
+bool
+thread_check_alarm (int64_t current_tick)
+{
+    return thread_current()->alarm_tick <= current_tick;
+}
+
 /* Transitions a blocked thread T to the ready-to-run state.
    This is an error if T is not blocked.  (Use thread_yield() to
    make the running thread ready.)
@@ -254,6 +266,20 @@ thread_unblock (struct thread *t)
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
+
+bool
+thread_wake (struct thread *t, int64_t current_tick) 
+{
+    if (t->alarm_tick <= current_tick)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 /* Returns the name of the running thread. */
 const char *

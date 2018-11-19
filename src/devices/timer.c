@@ -25,6 +25,10 @@ static int64_t loops;
    Initialized by timer_calibrate(). */
 static unsigned loops_per_tick;
 
+/* List of processes in THREAD_BLOCKED state, that is, processes
+   that are waiting for their timers to expire */
+static struct list waiting_list;
+
 static intr_handler_func timer_interrupt;
 static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
@@ -38,6 +42,8 @@ timer_init (void)
 {
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
+
+  list_init (&waiting_list);
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -90,11 +96,49 @@ timer_elapsed (int64_t then)
 void
 timer_sleep (int64_t ticks) 
 {
-  int64_t start = timer_ticks ();
+    enum intr_level old_level;
 
-  ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
-    thread_yield ();
+    ASSERT (!intr_context ());
+
+    old_level = intr_disable ();
+
+    thread_set_alarm(timer_ticks () + ticks);
+    while (!thread_check_alarm(timer_ticks ()))
+    {
+        list_push_back (&waiting_list, &thread_current ()->elem);
+
+        thread_block ();
+    }
+
+    intr_set_level (old_level);
+}
+
+/* Iterating the waiting_list
+   and alarm threads that need to be awake */
+void
+timer_alarm (void) 
+{
+    enum intr_level old_level;
+    struct list_elem *e;
+
+    old_level = intr_disable ();
+
+    for (e = list_begin (&waiting_list); e != list_end (&waiting_list); )
+    {
+        struct thread *t = list_entry (e, struct thread, elem);
+
+        if (thread_wake (t, timer_ticks ()))
+        {
+            e = list_remove (e);
+            thread_unblock (t);
+        }
+        else
+        {
+            e = list_next (e);
+        }
+    }
+
+    intr_set_level (old_level);
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -176,6 +220,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
     return;
 
   ticks++;
+  timer_alarm ();
   thread_tick ();
 }
 
