@@ -40,10 +40,10 @@ static void real_time_delay (int64_t num, int32_t denom);
 void
 timer_init (void) 
 {
+  list_init (&waiting_list);
+
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
-
-  list_init (&waiting_list);
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -102,11 +102,9 @@ timer_sleep (int64_t ticks)
 
     old_level = intr_disable ();
 
-    printf ("Thread %d will be sleep for %ld. (will be awaken at %ld)\n", thread_current ()->tid, ticks, timer_ticks () + ticks);
     thread_set_alarm(timer_ticks () + ticks);
     while (!thread_check_alarm(timer_ticks ()))
     {
-        printf ("Thread %d pushed\n", thread_current ()->tid);
         list_push_back (&waiting_list, &thread_current ()->elem);
 
         thread_block ();
@@ -125,13 +123,18 @@ timer_alarm (void)
 
     old_level = intr_disable ();
 
-    if (!list_empty (&waiting_list))
+    for (e = list_begin (&waiting_list); e != list_end (&waiting_list); )
     {
-        printf ("Waiting list not empty\n");
-        for (e = list_begin (&waiting_list); e != list_end (&waiting_list);
-             e = list_next (e))
+        struct thread *t = list_entry (e, struct thread, elem);
+
+        if (thread_wake (t, timer_ticks ()))
         {
-            thread_wake (list_entry (e, struct thread, elem), timer_ticks ());
+            e = list_remove (e);
+            thread_unblock (t);
+        }
+        else
+        {
+            e = list_next (e);
         }
     }
 

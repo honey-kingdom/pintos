@@ -122,7 +122,7 @@ void thread_unblock (struct thread *);
 
 void thread_set_alarm (int64_t alarm_tick);
 bool thread_check_alarm (int64_t current_tick);
-void thread_wake (struct thread *t, int64_t current_tick);
+bool thread_wake (struct thread *t, int64_t current_tick);
 
 struct thread *thread_current (void);
 tid_t thread_tid (void);

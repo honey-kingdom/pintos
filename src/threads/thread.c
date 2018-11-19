@@ -224,8 +224,6 @@ thread_block (void)
   ASSERT (!intr_context ());
   ASSERT (intr_get_level () == INTR_OFF);
 
-  printf ("Thread %d blocked\n", thread_current ()->tid);
-
   thread_current ()->status = THREAD_BLOCKED;
   schedule ();
 }
@@ -256,7 +254,6 @@ thread_unblock (struct thread *t)
   enum intr_level old_level;
 
   ASSERT (is_thread (t));
-  printf ("Thread %d unblocked\n", t->tid);
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
@@ -265,13 +262,17 @@ thread_unblock (struct thread *t)
   intr_set_level (old_level);
 }
 
-void
+bool
 thread_wake (struct thread *t, int64_t current_tick) 
 {
-  if (t->alarm_tick <= current_tick)
-  {
-      //thread_unblock (t);
-  }
+    if (t->alarm_tick <= current_tick)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 
