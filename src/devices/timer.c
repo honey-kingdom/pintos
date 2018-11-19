@@ -96,19 +96,13 @@ timer_elapsed (int64_t then)
 void
 timer_sleep (int64_t ticks) 
 {
-<<<<<<< HEAD
-  int64_t start = timer_ticks ();
-
-  ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
-    thread_yield ();
-=======
     enum intr_level old_level;
 
     ASSERT (!intr_context ());
 
     old_level = intr_disable ();
 
+    printf ("Thread %d will be sleep for %ld. (will be awaken at %ld)\n", thread_current ()->tid, ticks, timer_ticks () + ticks);
     thread_set_alarm(timer_ticks () + ticks);
     while (!thread_check_alarm(timer_ticks ()))
     {
@@ -142,7 +136,6 @@ timer_alarm (void)
     }
 
     intr_set_level (old_level);
->>>>>>> cbec2c5... Reimplementation of timer_sleep()
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -224,10 +217,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
     return;
 
   ticks++;
-<<<<<<< HEAD
-=======
   timer_alarm ();
->>>>>>> cbec2c5... Reimplementation of timer_sleep()
   thread_tick ();
 }
 

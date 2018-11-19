@@ -230,8 +230,6 @@ thread_block (void)
   schedule ();
 }
 
-<<<<<<< HEAD
-=======
 void
 thread_set_alarm (int64_t alarm_tick)
 {
@@ -244,7 +242,6 @@ thread_check_alarm (int64_t current_tick)
     return thread_current()->alarm_tick <= current_tick;
 }
 
->>>>>>> cbec2c5... Reimplementation of timer_sleep()
 /* Transitions a blocked thread T to the ready-to-run state.
    This is an error if T is not blocked.  (Use thread_yield() to
    make the running thread ready.)
@@ -268,8 +265,6 @@ thread_unblock (struct thread *t)
   intr_set_level (old_level);
 }
 
-<<<<<<< HEAD
-=======
 void
 thread_wake (struct thread *t, int64_t current_tick) 
 {
@@ -280,7 +275,6 @@ thread_wake (struct thread *t, int64_t current_tick)
 }
 
 
->>>>>>> cbec2c5... Reimplementation of timer_sleep()
 /* Returns the name of the running thread. */
 const char *
 thread_name (void) 
@@ -362,13 +356,8 @@ thread_foreach (thread_action_func *func, void *aux)
 
   ASSERT (intr_get_level () == INTR_OFF);
 
-<<<<<<< HEAD
   for (e = list_begin (&all_list); e != list_end (&all_list);
        e = list_next (e))
-=======
-    for (e = list_begin (&all_list); e != list_end (&all_list);
-         e = list_next (e))
->>>>>>> cbec2c5... Reimplementation of timer_sleep()
     {
       struct thread *t = list_entry (e, struct thread, allelem);
       func (t, aux);
