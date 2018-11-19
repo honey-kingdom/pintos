@@ -25,6 +25,10 @@ static int64_t loops;
    Initialized by timer_calibrate(). */
 static unsigned loops_per_tick;
 
+/* List of processes in THREAD_BLOCKED state, that is, processes
+   that are waiting for their timers to expire */
+static struct list waiting_list;
+
 static intr_handler_func timer_interrupt;
 static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
@@ -38,6 +42,8 @@ timer_init (void)
 {
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
+
+  list_init (&waiting_list);
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -90,11 +96,53 @@ timer_elapsed (int64_t then)
 void
 timer_sleep (int64_t ticks) 
 {
+<<<<<<< HEAD
   int64_t start = timer_ticks ();
 
   ASSERT (intr_get_level () == INTR_ON);
   while (timer_elapsed (start) < ticks) 
     thread_yield ();
+=======
+    enum intr_level old_level;
+
+    ASSERT (!intr_context ());
+
+    old_level = intr_disable ();
+
+    thread_set_alarm(timer_ticks () + ticks);
+    while (!thread_check_alarm(timer_ticks ()))
+    {
+        printf ("Thread %d pushed\n", thread_current ()->tid);
+        list_push_back (&waiting_list, &thread_current ()->elem);
+
+        thread_block ();
+    }
+
+    intr_set_level (old_level);
+}
+
+/* Iterating the waiting_list
+   and alarm threads that need to be awake */
+void
+timer_alarm (void) 
+{
+    enum intr_level old_level;
+    struct list_elem *e;
+
+    old_level = intr_disable ();
+
+    if (!list_empty (&waiting_list))
+    {
+        printf ("Waiting list not empty\n");
+        for (e = list_begin (&waiting_list); e != list_end (&waiting_list);
+             e = list_next (e))
+        {
+            thread_wake (list_entry (e, struct thread, elem), timer_ticks ());
+        }
+    }
+
+    intr_set_level (old_level);
+>>>>>>> cbec2c5... Reimplementation of timer_sleep()
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -176,6 +224,10 @@ timer_interrupt (struct intr_frame *args UNUSED)
     return;
 
   ticks++;
+<<<<<<< HEAD
+=======
+  timer_alarm ();
+>>>>>>> cbec2c5... Reimplementation of timer_sleep()
   thread_tick ();
 }
 

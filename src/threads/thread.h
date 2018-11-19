@@ -88,6 +88,10 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
+<<<<<<< HEAD
+=======
+    int64_t alarm_tick;
+>>>>>>> cbec2c5... Reimplementation of timer_sleep()
     struct list_elem allelem;           /* List element for all threads list. */
 
     /* Shared between thread.c and synch.c. */
@@ -118,6 +122,13 @@ tid_t thread_create (const char *name, int priority, thread_func *, void *);
 
 void thread_block (void);
 void thread_unblock (struct thread *);
+<<<<<<< HEAD
+=======
+
+void thread_set_alarm (int64_t alarm_tick);
+bool thread_check_alarm (int64_t current_tick);
+void thread_wake (struct thread *t, int64_t current_tick);
+>>>>>>> cbec2c5... Reimplementation of timer_sleep()
 
 struct thread *thread_current (void);
 tid_t thread_tid (void);
